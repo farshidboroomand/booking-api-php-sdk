@@ -1,0 +1,36 @@
+{
+    "name": "farshidboroomand/booking-api-php-sdk",
+    "description": "The unofficial PHP SDK for the Booking.com Demand API (V3)",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Farshidboroomand\\BookingApiPhpSdk\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^8.3",
+        "saloonphp/saloon": "^4.0"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.30",
+        "pestphp/pest": "^4.7",
+        "phpstan/phpstan": "^2.2"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    },
+    "scripts": {
+        "lint": ["./vendor/bin/pint --test"],
+        "pint": ["./vendor/bin/pint"],
+        "stan": ["./vendor/bin/phpstan analyse --memory-limit=2G"],
+        "test": ["./vendor/bin/pest"]
+    }
+}
