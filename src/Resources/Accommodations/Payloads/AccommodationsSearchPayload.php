@@ -10,6 +10,8 @@ final class AccommodationsSearchPayload
      * @param  array<string, mixed>  $booker
      * @param  array<string, mixed>  $guests
      * @param  array<string, mixed>  $accommodations
+     * @param  array<string, mixed>|null  $guestAttributes
+     * @param  array<string, string>  $extras
      * @param  array<string, mixed>  $filters
      * @param  array<string, mixed>  $sort
      */
@@ -23,6 +25,9 @@ final class AccommodationsSearchPayload
         public ?int $city = null,
         public ?string $country = null,
         public ?string $currency = null,
+        public ?string $travelPurpose = null,
+        public ?array $guestAttributes = null,
+        public array $extras = [],
         public array $filters = [],
         public ?string $page = null,
         public int $rows = 25,
@@ -46,6 +51,12 @@ final class AccommodationsSearchPayload
         /** @var array<string, mixed> $filters */
         $filters = isset($data['filters']) && is_array($data['filters']) ? $data['filters'] : [];
 
+        /** @var array<string, string> $extras */
+        $extras = isset($data['extras']) && is_array($data['extras']) ? $data['extras'] : [];
+
+        /** @var array<string, mixed>|null $guestAttributes */
+        $guestAttributes = isset($data['guestAttributes']) && is_array($data['guestAttributes']) ? $data['guestAttributes'] : null;
+
         /** @var array<string, mixed> $sort */
         $sort = isset($data['sort']) && is_array($data['sort']) ? $data['sort'] : [];
 
@@ -59,6 +70,9 @@ final class AccommodationsSearchPayload
             city: isset($data['city']) && is_int($data['city']) ? $data['city'] : null,
             country: isset($data['country']) && is_string($data['country']) ? $data['country'] : null,
             currency: isset($data['currency']) && is_string($data['currency']) ? $data['currency'] : null,
+            travelPurpose: isset($data['travelPurpose']) && is_string($data['travelPurpose']) ? $data['travelPurpose'] : null,
+            guestAttributes: $guestAttributes,
+            extras: $extras,
             filters: $filters,
             page: isset($data['page']) && is_string($data['page']) ? $data['page'] : null,
             rows: isset($data['rows']) && is_int($data['rows']) ? $data['rows'] : 25,
@@ -100,6 +114,18 @@ final class AccommodationsSearchPayload
 
         if (is_string($this->currency)) {
             $payload['currency'] = $this->currency;
+        }
+
+        if (is_string($this->travelPurpose)) {
+            $payload['travelPurpose'] = $this->travelPurpose;
+        }
+
+        if (is_array($this->guestAttributes)) {
+            $payload['guestAttributes'] = $this->guestAttributes;
+        }
+
+        if (count($this->extras) > 0) {
+            $payload['extras'] = $this->extras;
         }
 
         if (count($this->filters) > 0) {

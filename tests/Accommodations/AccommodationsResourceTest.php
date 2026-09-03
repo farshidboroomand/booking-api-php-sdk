@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Farshidboroomand\BookingApiPhpSdk\Client;
+use Farshidboroomand\BookingApiPhpSdk\Enums\Extras;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationSearchResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\Accommodation;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsSearchPayload;
@@ -26,6 +27,7 @@ describe('Accommodations Search', function (): void {
                 'checkout' => '2026-10-05',
                 'guests' => ['number_of_adults' => 2, 'number_of_rooms' => 1],
                 'country' => 'fr',
+                'extras' => [Extras::ExtraCharges->value, Extras::Products->value],
             ]),
         );
 
