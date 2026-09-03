@@ -2,8 +2,6 @@
 
 An unofficial PHP SDK for the [Booking.com Demand API](https://developers.booking.com/demand/docs/open-api/3.2/demand-api) (version 3.2). It wraps the API behind typed, readable PHP objects so you can search and later book inventory without hand-writing the HTTP calls and payloads.
 
-This package is built on top of the [Saloon](https://github.com/saloonphp/saloon) HTTP client and follows the structure popularised by the [Sevalla SDK](https://github.com/JustSteveKing/sevalla-sdk), adapted for Booking.com's **POST-based**, payload-driven API.
-
 > **Status: under construction.** This SDK is an early-stage project. Right now it supports the accommodation search endpoint, and new resources are being added. The public API and namespaces may change before a stable `1.0.0` release. Use it for exploration and testing, not yet for production traffic.
 
 ---

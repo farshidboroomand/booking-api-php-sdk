@@ -1,0 +1,31 @@
+#!/usr/bin/env sh
+
+# Pre-commit hook: run code style check and the test suite before committing.
+# If either fails, the commit is aborted. You can bypass with --no-verify.
+# Install: git config core.hooksPath .githooks
+
+set -e
+set -u
+
+echo ""
+echo "==> composer lint"
+composer lint
+lint_status=$?
+if [ "$lint_status" -ne 0 ]; then
+    echo ""
+    echo "ERROR: code style check failed. Run 'composer pint' to auto-fix, then commit again."
+    exit 1
+fi
+
+echo ""
+echo "==> composer test"
+composer test
+test_status=$?
+if [ "$test_status" -ne 0 ]; then
+    echo ""
+    echo "ERROR: test suite failed. Fix the failing tests, then commit again."
+    exit 1
+fi
+
+echo ""
+echo "Pre-commit checks passed."
