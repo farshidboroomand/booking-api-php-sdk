@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace Farshidboroomand\BookingApiPhpSdk;
 
 use Farshidboroomand\BookingApiPhpSdk\Enums\Environment;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationsResource;
 use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Connector;
 use Saloon\Http\PendingRequest;
+use Saloon\Traits\Plugins\AlwaysThrowOnErrors;
 use SensitiveParameter;
 
 final class Client extends Connector
 {
+    use AlwaysThrowOnErrors;
+
     public const string VERSION = '1.0.0';
 
     public function __construct(
@@ -40,5 +44,10 @@ final class Client extends Connector
         return new TokenAuthenticator(
             token: $this->token
         );
+    }
+
+    public function accommodations(): AccommodationsResource
+    {
+        return new AccommodationsResource(connector: $this);
     }
 }

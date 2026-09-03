@@ -1,0 +1,279 @@
+{
+  "request_id": "01m1e5mewrpd1226pcnf4401v9",
+  "data": [
+    {
+      "id": 6331862,
+      "commission": {
+        "amount": 69.56,
+        "percentage": 4.88
+      },
+      "currency": {
+        "accommodation": "EUR",
+        "booker": null
+      },
+      "deep_link_url": "booking://hotel/6331862?affiliate_id=893799&checkin=2026-09-01&checkout=2026-09-10",
+      "price": {
+        "base": {
+          "accommodation_currency": 1177.69,
+          "booker_currency": null
+        },
+        "charges": [
+          {
+            "charge": 21,
+            "condition": null,
+            "included_in": {
+              "display": true
+            },
+            "total_amount": {
+              "accommodation_currency": 247.31,
+              "booker_currency": null
+            }
+          },
+          {
+            "charge": 22,
+            "condition": null,
+            "included_in": {
+              "display": true
+            },
+            "total_amount": {
+              "accommodation_currency": 147.21,
+              "booker_currency": null
+            }
+          },
+          {
+            "charge": 142,
+            "condition": null,
+            "included_in": {
+              "display": true
+            },
+            "total_amount": {
+              "accommodation_currency": 0,
+              "booker_currency": null
+            }
+          }
+        ],
+        "display": {
+          "accommodation_currency": 1572.21,
+          "booker_currency": null
+        },
+        "total": {
+          "accommodation_currency": 1572.21,
+          "booker_currency": null
+        }
+      },
+      "products": [
+        {
+          "id": "633186205_359584395_2_41_0",
+          "bundle": null,
+          "children": [],
+          "deal": null,
+          "number_available": 6,
+          "number_of_adults": 2,
+          "policies": {
+            "cancellation": {
+              "free_cancellation_until": null,
+              "type": "partially_refundable"
+            },
+            "meal_plan": {
+              "meals": [
+                "breakfast"
+              ],
+              "plan": "breakfast_included"
+            },
+            "payment": {
+              "prepayment_required": false,
+              "timings": [
+                "pay_at_the_property",
+                "pay_online_now"
+              ]
+            }
+          },
+          "price": {
+            "base": {
+              "accommodation_currency": 1177.69,
+              "booker_currency": null
+            },
+            "charges": [
+              {
+                "charge": 142,
+                "included_in": {
+                  "display": true
+                },
+                "mode": "per_person_per_night",
+                "percentage": null,
+                "total_amount": {
+                  "accommodation_currency": 0,
+                  "booker_currency": null
+                },
+                "unit_amount": {
+                  "accommodation_currency": 0,
+                  "booker_currency": null
+                }
+              },
+              {
+                "charge": 22,
+                "included_in": {
+                  "display": true
+                },
+                "mode": "percentage",
+                "percentage": 12.5,
+                "total_amount": {
+                  "accommodation_currency": 147.21,
+                  "booker_currency": null
+                },
+                "unit_amount": null
+              },
+              {
+                "charge": 21,
+                "included_in": {
+                  "display": true
+                },
+                "mode": "percentage",
+                "percentage": 21,
+                "total_amount": {
+                  "accommodation_currency": 247.31,
+                  "booker_currency": null
+                },
+                "unit_amount": null
+              }
+            ],
+            "display": {
+              "accommodation_currency": 1572.21,
+              "booker_currency": null
+            },
+            "total": {
+              "accommodation_currency": 1572.21,
+              "booker_currency": null
+            }
+          },
+          "room": "633186205"
+        }
+      ],
+      "url": "https://www.booking.com/hotel/nl/holiday-inn-express-amsterdam-motorkade.html?aid=893799&checkin=2026-09-01&checkout=2026-09-10&no_rooms=1&group_adults=2"
+    },
+    {
+      "id": 10340,
+      "commission": {
+        "amount": 281.33,
+        "percentage": 5.34
+      },
+      "currency": {
+        "accommodation": "EUR",
+        "booker": null
+      },
+      "deep_link_url": "booking://hotel/10340?affiliate_id=893799&checkin=2026-09-01&checkout=2026-09-10",
+      "price": {
+        "base": {
+          "accommodation_currency": 4350.41,
+          "booker_currency": null
+        },
+        "charges": [
+          {
+            "charge": 21,
+            "condition": null,
+            "included_in": {
+              "display": true
+            },
+            "total_amount": {
+              "accommodation_currency": 913.59,
+              "booker_currency": null
+            }
+          },
+          {
+            "charge": 22,
+            "condition": null,
+            "included_in": {
+              "display": true
+            },
+            "total_amount": {
+              "accommodation_currency": 543.8,
+              "booker_currency": null
+            }
+          }
+        ],
+        "display": {
+          "accommodation_currency": 5807.8,
+          "booker_currency": null
+        },
+        "total": {
+          "accommodation_currency": 5807.8,
+          "booker_currency": null
+        }
+      },
+      "products": [
+        {
+          "id": "1034079_108785070_0_0_0",
+          "bundle": null,
+          "children": [],
+          "deal": null,
+          "number_available": 9,
+          "number_of_adults": 2,
+          "policies": {
+            "cancellation": {
+              "free_cancellation_until": null,
+              "type": "partially_refundable"
+            },
+            "meal_plan": {
+              "meals": [],
+              "plan": "no_plan"
+            },
+            "payment": {
+              "prepayment_required": false,
+              "timings": [
+                "pay_at_the_property",
+                "pay_online_now"
+              ]
+            }
+          },
+          "price": {
+            "base": {
+              "accommodation_currency": 4350.41,
+              "booker_currency": null
+            },
+            "charges": [
+              {
+                "charge": 22,
+                "included_in": {
+                  "display": true
+                },
+                "mode": "percentage",
+                "percentage": 12.5,
+                "total_amount": {
+                  "accommodation_currency": 543.8,
+                  "booker_currency": null
+                },
+                "unit_amount": null
+              },
+              {
+                "charge": 21,
+                "included_in": {
+                  "display": true
+                },
+                "mode": "percentage",
+                "percentage": 21,
+                "total_amount": {
+                  "accommodation_currency": 913.59,
+                  "booker_currency": null
+                },
+                "unit_amount": null
+              }
+            ],
+            "display": {
+              "accommodation_currency": 5807.8,
+              "booker_currency": null
+            },
+            "total": {
+              "accommodation_currency": 5807.8,
+              "booker_currency": null
+            }
+          },
+          "room": "1034079"
+        }
+      ],
+      "url": "https://www.booking.com/hotel/nl/anantara-ghkrasnapolsky.html?aid=893799&checkin=2026-09-01&checkout=2026-09-10&no_rooms=1&group_adults=2"
+    }
+  ],
+  "metadata": {
+    "next_page": "eyJhbGciOiJIUzI1NiJ9.eyJwIjp7ImJvb2tlciI6eyJjb3VudHJ5IjoibmwiLCJwbGF0Zm9ybSI6ImRlc2t0b3AifSwiY2hlY2tpbiI6IjIwMjYtMDktMDEiLCJjaGVja291dCI6IjIwMjYtMDktMTAiLCJjaXR5IjotMjE0MDQ3OSwiZXh0cmFzIjpbImV4dHJhX2NoYXJnZXMiLCJwcm9kdWN0cyJdLCJndWVzdHMiOnsibnVtYmVyX29mX2FkdWx0cyI6MiwibnVtYmVyX29mX3Jvb21zIjoxfSwib2Zmc2V0IjoxMDB9LCJhdWQiOlsiL2FjY29tbW9kYXRpb25zL3NlYXJjaCJdLCJleHAiOjE3ODgyNjY2MTJ9.mjDTOrMoRwKZtBTEU7V_JbuaHfYtu_21LAaVjb8irXM"
+  }
+}
