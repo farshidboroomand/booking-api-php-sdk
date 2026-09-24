@@ -2,7 +2,7 @@
 
 An unofficial PHP SDK for the [Booking.com Demand API](https://developers.booking.com/demand/docs/open-api/3.2/demand-api) (version 3.2). It wraps the API behind typed, readable PHP objects so you can search and later book inventory without hand-writing the HTTP calls and payloads.
 
-> **Status: under construction.** This SDK is an early-stage project. Right now it supports the accommodation search endpoint, and new resources are being added. The public API and namespaces may change before a stable `1.0.0` release. Use it for exploration and testing, not yet for production traffic.
+> **Status: under construction.** This SDK is an early-stage project. Right now it supports accommodation search and availability. The public API and namespaces may change before a stable `1.0.0` release. Use it for exploration and testing, not yet for production traffic.
 
 ---
 
@@ -84,6 +84,29 @@ foreach ($result->accommodations as $accommodation) {
 
 if ($result->nextPage !== null) {
     // pass $result->nextPage back into the payload's 'page' field to fetch the next page
+}
+```
+
+To check live availability for one or more properties (up to 50 IDs), use the availability payload. Each returned accommodation contains its products and, when supplied by the API, a recommendation.
+
+```php
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsAvailabilityPayload;
+
+$result = $client->accommodations()->availability(
+    AccommodationsAvailabilityPayload::make([
+        'accommodations' => [10004],
+        'booker' => ['country' => 'nl', 'platform' => 'desktop'],
+        'checkin' => '2026-10-01',
+        'checkout' => '2026-10-05',
+        'guests' => ['number_of_adults' => 2, 'number_of_rooms' => 1],
+        'extras' => ['extra_charges'],
+    ]),
+);
+
+foreach ($result->accommodations as $accommodation) {
+    foreach ($accommodation->products as $product) {
+        echo $product['id'];
+    }
 }
 ```
 
