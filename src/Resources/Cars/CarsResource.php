@@ -8,6 +8,7 @@ use Farshidboroomand\BookingApiPhpSdk\Client;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Payloads\CarsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\ConstantsCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DepotsCarsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DepotScoresCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\SearchCarsRequest;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -58,6 +59,20 @@ final readonly class CarsResource
         $response = $this->connector->send(new DepotsCarsRequest($lastModified, $maximumResults, $languages, $page));
 
         /** @var CarDepotsResult $result */
+        $result = $response->dto();
+
+        return $result;
+    }
+
+    /**
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function depotScores(?int $maximumResults = null, ?string $page = null): CarDepotScoresResult
+    {
+        $response = $this->connector->send(new DepotScoresCarsRequest($maximumResults, $page));
+
+        /** @var CarDepotScoresResult $result */
         $result = $response->dto();
 
         return $result;

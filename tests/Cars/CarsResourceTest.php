@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 use Farshidboroomand\BookingApiPhpSdk\Client;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarConstantsResult;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarDepotScoresResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarDepotsResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarSearchResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Payloads\CarsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\ConstantsCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DepotsCarsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DepotScoresCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\SearchCarsRequest;
 use Saloon\Http\Faking\MockResponse;
 
@@ -74,4 +76,25 @@ test('it retrieves paginated car depots', function (): void {
         ->and($result->depots[0]->data['pickup']['instructions']['en-gb'])->toBe('Arrivals hall')
         ->and($result->nextPage)->toBe('cursor-2')
         ->and((string) (new DepotsCarsRequest)->body())->toBe('{}');
+});
+
+test('it retrieves depot review scores', function (): void {
+    $client = new Client(affiliateId: 1234, token: 'token');
+    $client->withMockClient(mockClient([
+        DepotScoresCarsRequest::class => MockResponse::make([
+            'request_id' => 'request-1',
+            'data' => [
+                ['id' => 5944, 'score' => 9.1, 'number_of_reviews' => 105, 'breakdown' => ['cleanliness' => ['score' => 8.7]]],
+                ['id' => 5945, 'score' => null, 'number_of_reviews' => null, 'breakdown' => []],
+            ],
+            'metadata' => ['next_page' => 'cursor-2'],
+        ]),
+    ]));
+
+    $result = $client->cars()->depotScores(maximumResults: 10);
+
+    expect($result)->toBeInstanceOf(CarDepotScoresResult::class)
+        ->and($result->scores[0]->score)->toBe(9.1)
+        ->and($result->scores[1]->score)->toBeNull()
+        ->and($result->nextPage)->toBe('cursor-2');
 });
