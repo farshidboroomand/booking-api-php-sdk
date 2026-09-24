@@ -11,6 +11,7 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DepotsCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DepotScoresCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DetailsCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\SearchCarsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\SuppliersCarsRequest;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 
@@ -88,6 +89,22 @@ final readonly class CarsResource
         $response = $this->connector->send(new DetailsCarsRequest($lastModified, $maximumResults, $page));
 
         /** @var CarDetailsResult $result */
+        $result = $response->dto();
+
+        return $result;
+    }
+
+    /**
+     * @param  list<int>  $suppliers
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function suppliers(array $suppliers = [], ?int $maximumResults = null, ?string $page = null): CarSuppliersResult
+    {
+        $response = $this->connector->send(new SuppliersCarsRequest($suppliers, $maximumResults, $page));
+
+        /** @var CarSuppliersResult $result */
         $result = $response->dto();
 
         return $result;

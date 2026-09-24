@@ -1,6 +1,6 @@
 # Booking.com Demand API PHP SDK
 
-An unofficial PHP SDK for the [Booking.com Demand API v3.2](https://developers.booking.com/demand/docs/open-api/3.2/demand-api). It currently supports the accommodation endpoints. The API may change before a stable release.
+An unofficial PHP SDK for the [Booking.com Demand API v3.2](https://developers.booking.com/demand/docs/open-api/3.2/demand-api). It supports accommodation and car rental endpoints. The API may change before a stable release.
 
 ## Requirements
 
@@ -54,6 +54,8 @@ The accommodation resource also provides:
 Payload classes are in `Resources\Accommodations\Payloads`. Results expose typed properties; details and review records retain their full API data for optional fields.
 
 Car rental search is available through `$client->cars()->search($payload)`. Pass a `CarsSearchPayload` with booker, currency, driver, and route information. The result includes products, pagination, and a search token.
+
+The car resource also provides `constants()`, `depots()`, `depotScores()`, `details()`, and `suppliers()`. Paginated results expose `nextPage`.
 
 ## Development
 

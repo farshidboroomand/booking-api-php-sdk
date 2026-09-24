@@ -8,12 +8,14 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarDepotScoresResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarDepotsResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarDetailsResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarSearchResult;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarSuppliersResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Payloads\CarsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\ConstantsCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DepotsCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DepotScoresCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DetailsCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\SearchCarsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\SuppliersCarsRequest;
 use Saloon\Http\Faking\MockResponse;
 
 test('it searches cars and returns pagination and search token', function (): void {
@@ -117,4 +119,23 @@ test('it retrieves paginated car specifications', function (): void {
         ->and($result->cars[0]->id)->toBe(37715)
         ->and($result->cars[0]->data['model'])->toBe('Elantra')
         ->and($result->nextPage)->toBe('cursor-2');
+});
+
+test('it retrieves selected car suppliers', function (): void {
+    $client = new Client(affiliateId: 1234, token: 'token');
+    $client->withMockClient(mockClient([
+        SuppliersCarsRequest::class => MockResponse::make([
+            'request_id' => 'request-1',
+            'data' => [['id' => 62, 'name' => 'Budget', 'logo' => 'https://example.com/budget.jpg']],
+            'metadata' => ['next_page' => null, 'total_results' => 1],
+        ]),
+    ]));
+
+    $result = $client->cars()->suppliers([62]);
+
+    expect($result)->toBeInstanceOf(CarSuppliersResult::class)
+        ->and($result->suppliers[0]->name)->toBe('Budget')
+        ->and($result->suppliers[0]->logo)->toBe('https://example.com/budget.jpg')
+        ->and($result->totalResults)->toBe(1)
+        ->and((string) (new SuppliersCarsRequest)->body())->toBe('{}');
 });
