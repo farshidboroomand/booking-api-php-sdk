@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 use Farshidboroomand\BookingApiPhpSdk\Client;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarConstantsResult;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarDepotsResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarSearchResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Payloads\CarsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\ConstantsCarsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DepotsCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\SearchCarsRequest;
 use Saloon\Http\Faking\MockResponse;
 
@@ -53,4 +55,23 @@ test('it retrieves localized car constants', function (): void {
     expect($result)->toBeInstanceOf(CarConstantsResult::class)
         ->and($result->sections['car_categories'][0]['id'])->toBe('compact_suv')
         ->and((string) (new ConstantsCarsRequest)->body())->toBe('{}');
+});
+
+test('it retrieves paginated car depots', function (): void {
+    $client = new Client(affiliateId: 1234, token: 'token');
+    $client->withMockClient(mockClient([
+        DepotsCarsRequest::class => MockResponse::make([
+            'request_id' => 'request-1',
+            'data' => [['id' => 5944, 'city' => -2140479, 'pickup' => ['instructions' => ['en-gb' => 'Arrivals hall']]]],
+            'metadata' => ['next_page' => 'cursor-2'],
+        ]),
+    ]));
+
+    $result = $client->cars()->depots(languages: ['en-gb'], maximumResults: 10);
+
+    expect($result)->toBeInstanceOf(CarDepotsResult::class)
+        ->and($result->depots[0]->id)->toBe(5944)
+        ->and($result->depots[0]->data['pickup']['instructions']['en-gb'])->toBe('Arrivals hall')
+        ->and($result->nextPage)->toBe('cursor-2')
+        ->and((string) (new DepotsCarsRequest)->body())->toBe('{}');
 });

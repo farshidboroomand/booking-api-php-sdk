@@ -7,6 +7,7 @@ namespace Farshidboroomand\BookingApiPhpSdk\Resources\Cars;
 use Farshidboroomand\BookingApiPhpSdk\Client;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Payloads\CarsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\ConstantsCarsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DepotsCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\SearchCarsRequest;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -41,6 +42,22 @@ final readonly class CarsResource
         $response = $this->connector->send(new ConstantsCarsRequest($constants, $languages));
 
         /** @var CarConstantsResult $result */
+        $result = $response->dto();
+
+        return $result;
+    }
+
+    /**
+     * @param  list<string>  $languages
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function depots(?string $lastModified = null, ?int $maximumResults = null, array $languages = [], ?string $page = null): CarDepotsResult
+    {
+        $response = $this->connector->send(new DepotsCarsRequest($lastModified, $maximumResults, $languages, $page));
+
+        /** @var CarDepotsResult $result */
         $result = $response->dto();
 
         return $result;
