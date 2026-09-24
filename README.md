@@ -139,6 +139,22 @@ foreach ($changes->changed as $id) {
 }
 ```
 
+To fetch traveller reviews, provide accommodation IDs and optional filters. Use `nextPage` as the next payload's `page` value.
+
+```php
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsReviewsPayload;
+
+$reviews = $client->accommodations()->reviews(
+    new AccommodationsReviewsPayload([10004], languages: ['en-gb'], rows: 10),
+);
+
+foreach ($reviews->accommodations as $property) {
+    foreach ($property->reviews as $review) {
+        echo $review['summary'];
+    }
+}
+```
+
 To check live availability for one or more properties (up to 50 IDs), use the availability payload. Each returned accommodation contains its products and, when supplied by the API, a recommendation.
 
 ```php

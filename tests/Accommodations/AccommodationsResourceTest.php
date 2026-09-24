@@ -8,18 +8,21 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationAvai
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationConstantsResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationDetailsChangesResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationDetailsResult;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationReviewsResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationSearchResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\Accommodation;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationBrand;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationChain;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsAvailabilityPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsDetailsPayload;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsReviewsPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\AvailabilityAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ChainsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ConstantsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsChangesAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ReviewsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
 use Saloon\Http\Faking\MockResponse;
 
@@ -136,6 +139,24 @@ test('it retrieves accommodation detail changes and next timestamp', function ()
         ->and($result->changed)->toBe([100])
         ->and($result->closed['permanently'])->toBe([107])
         ->and($result->next)->toBe('2026-09-23T12:24:42+00:00');
+});
+
+test('it retrieves paginated accommodation reviews', function (): void {
+    $client = new Client(affiliateId: 1234, token: 'token');
+    $client->withMockClient(mockClient([
+        ReviewsAccommodationsRequest::class => MockResponse::make([
+            'request_id' => 'request-1',
+            'data' => [['id' => 10004, 'reviews' => [['id' => 2130645894, 'score' => 9, 'positive' => 'Lovely stay']], 'url' => 'https://www.booking.com/hotel/example.html#tab-reviews']],
+            'metadata' => ['next_page' => 'cursor-2'],
+        ]),
+    ]));
+
+    $payload = new AccommodationsReviewsPayload([10004], languages: ['en-gb'], rows: 10, score: ['minimum' => 8]);
+    $result = $client->accommodations()->reviews($payload);
+
+    expect($result)->toBeInstanceOf(AccommodationReviewsResult::class)
+        ->and($result->accommodations[0]->reviews[0]['positive'])->toBe('Lovely stay')
+        ->and($result->nextPage)->toBe('cursor-2');
 });
 
 test('it retrieves availability for multiple accommodations', function (): void {
