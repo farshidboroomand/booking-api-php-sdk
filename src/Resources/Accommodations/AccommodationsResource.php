@@ -15,6 +15,7 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\Availabi
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ChainsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ConstantsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsChangesAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -103,6 +104,23 @@ final readonly class AccommodationsResource
         $response = $this->connector->send(new DetailsAccommodationsRequest($details));
 
         /** @var AccommodationDetailsResult $result */
+        $result = $response->dto();
+
+        return $result;
+    }
+
+    /**
+     * @param  list<string>  $countries
+     * @param  list<int>  $cities
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function detailsChanges(string $lastChange, array $countries = [], array $cities = []): AccommodationDetailsChangesResult
+    {
+        $response = $this->connector->send(new DetailsChangesAccommodationsRequest($lastChange, $countries, $cities));
+
+        /** @var AccommodationDetailsChangesResult $result */
         $result = $response->dto();
 
         return $result;

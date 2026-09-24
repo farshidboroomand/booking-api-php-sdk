@@ -6,6 +6,7 @@ use Farshidboroomand\BookingApiPhpSdk\Client;
 use Farshidboroomand\BookingApiPhpSdk\Enums\Extras;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationAvailabilityResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationConstantsResult;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationDetailsChangesResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationDetailsResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationSearchResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\Accommodation;
@@ -18,6 +19,7 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\Availabi
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ChainsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ConstantsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsChangesAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
 use Saloon\Http\Faking\MockResponse;
 
@@ -112,6 +114,28 @@ test('it retrieves accommodation details and pagination', function (): void {
         ->and($result->accommodations[0]->id)->toBe(10004)
         ->and($result->accommodations[0]->data['rooms'][0]['id'])->toBe('room-a')
         ->and($result->nextPage)->toBe('cursor-2');
+});
+
+test('it retrieves accommodation detail changes and next timestamp', function (): void {
+    $client = new Client(affiliateId: 1234, token: 'token');
+    $client->withMockClient(mockClient([
+        DetailsChangesAccommodationsRequest::class => MockResponse::make([
+            'request_id' => 'request-1',
+            'data' => [
+                'changes' => ['changed' => [100], 'opened' => [111], 'closed' => ['fraud' => [], 'permanently' => [107], 'temporarily' => [105]]],
+                'from' => '2026-09-23T12:00:00+00:00',
+                'next' => '2026-09-23T12:24:42+00:00',
+                'total_changes' => 4,
+            ],
+        ]),
+    ]));
+
+    $result = $client->accommodations()->detailsChanges('2026-09-23T12:00:00+00:00', countries: ['nl']);
+
+    expect($result)->toBeInstanceOf(AccommodationDetailsChangesResult::class)
+        ->and($result->changed)->toBe([100])
+        ->and($result->closed['permanently'])->toBe([107])
+        ->and($result->next)->toBe('2026-09-23T12:24:42+00:00');
 });
 
 test('it retrieves availability for multiple accommodations', function (): void {

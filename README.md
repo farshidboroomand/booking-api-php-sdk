@@ -126,6 +126,19 @@ foreach ($details->accommodations as $property) {
 // Pass $details->nextPage as the 'page' criterion to fetch more results.
 ```
 
+To keep a local property cache current, poll for changed IDs and pass the returned `next` timestamp into the next call when it is present:
+
+```php
+$changes = $client->accommodations()->detailsChanges(
+    '2026-09-23T12:00:00+00:00',
+    countries: ['nl'],
+);
+
+foreach ($changes->changed as $id) {
+    // Refresh this property's details.
+}
+```
+
 To check live availability for one or more properties (up to 50 IDs), use the availability payload. Each returned accommodation contains its products and, when supplied by the API, a recommendation.
 
 ```php
