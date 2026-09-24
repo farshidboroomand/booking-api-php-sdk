@@ -38,24 +38,29 @@ $accommodations = $result->accommodations;
 $nextPage = $result->nextPage;
 ```
 
-The accommodation resource also provides:
+## Implemented APIs
 
-| Method | Purpose |
+All endpoints use the Demand API v3.2. Call accommodation methods through `$client->accommodations()` and car methods through `$client->cars()`.
+
+| Endpoint | SDK method |
 | --- | --- |
-| `availability($payload)` | Live products and prices |
-| `chains()` | Chains and brands |
-| `constants($sections, $languages)` | Accommodation reference data |
-| `details($payload)` | Property details |
-| `detailsChanges($lastChange, $countries, $cities)` | Changed property IDs |
-| `reviews($payload)` | Traveller reviews |
-| `reviewScores($payload)` | Aggregate scores |
-| `thirdPartySuppliers()` | Supplier information |
+| `POST /accommodations/search` | `search($payload)` |
+| `POST /accommodations/availability` | `availability($payload)` |
+| `POST /accommodations/chains` | `chains()` |
+| `POST /accommodations/constants` | `constants($sections, $languages)` |
+| `POST /accommodations/details` | `details($payload)` |
+| `POST /accommodations/details/changes` | `detailsChanges($lastChange, $countries, $cities)` |
+| `POST /accommodations/reviews` | `reviews($payload)` |
+| `POST /accommodations/reviews/scores` | `reviewScores($payload)` |
+| `POST /accommodations/third-party-suppliers` | `thirdPartySuppliers()` |
+| `POST /cars/search` | `search($payload)` |
+| `POST /cars/constants` | `constants($sections, $languages)` |
+| `POST /cars/depots` | `depots($lastModified, $maximumResults, $languages, $page)` |
+| `POST /cars/depots/reviews/scores` | `depotScores($maximumResults, $page)` |
+| `POST /cars/details` | `details($lastModified, $maximumResults, $page)` |
+| `POST /cars/suppliers` | `suppliers($suppliers, $maximumResults, $page)` |
 
-Payload classes are in `Resources\Accommodations\Payloads`. Results expose typed properties; details and review records retain their full API data for optional fields.
-
-Car rental search is available through `$client->cars()->search($payload)`. Pass a `CarsSearchPayload` with booker, currency, driver, and route information. The result includes products, pagination, and a search token.
-
-The car resource also provides `constants()`, `depots()`, `depotScores()`, `details()`, and `suppliers()`. Paginated results expose `nextPage`.
+Payload classes are in `Resources\Accommodations\Payloads` and `Resources\Cars\Payloads`. Paginated results expose `nextPage`.
 
 ## Development
 
