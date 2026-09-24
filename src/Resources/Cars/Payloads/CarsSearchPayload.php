@@ -18,7 +18,7 @@ final readonly class CarsSearchPayload
      */
     public function __construct(
         public array $booker,
-        public string $currency,
+        public ?string $currency,
         public array $driver,
         public array $route,
         public array $filters = [],

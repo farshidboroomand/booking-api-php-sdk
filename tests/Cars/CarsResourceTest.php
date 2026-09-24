@@ -47,6 +47,17 @@ test('it searches cars and returns pagination and search token', function (): vo
         ->and($result->searchToken)->toBe('search-token');
 });
 
+test('car search includes a null currency when requested', function (): void {
+    $payload = new CarsSearchPayload(
+        booker: ['country' => 'nl'],
+        currency: null,
+        driver: ['age' => 36],
+        route: ['pickup' => [], 'dropoff' => []],
+    );
+
+    expect($payload->toArray())->toHaveKey('currency', null);
+});
+
 test('it retrieves localized car constants', function (): void {
     $client = new Client(affiliateId: 1234, token: 'token');
     $client->withMockClient(mockClient([
