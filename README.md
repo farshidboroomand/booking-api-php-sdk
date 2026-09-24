@@ -155,6 +155,17 @@ foreach ($reviews->accommodations as $property) {
 }
 ```
 
+Review score aggregates are available through a separate endpoint:
+
+```php
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsReviewScoresPayload;
+
+$scores = $client->accommodations()->reviewScores(
+    new AccommodationsReviewScoresPayload([10004], languages: ['en-gb']),
+);
+echo $scores[0]->score;
+```
+
 To check live availability for one or more properties (up to 50 IDs), use the availability payload. Each returned accommodation contains its products and, when supplied by the API, a recommendation.
 
 ```php

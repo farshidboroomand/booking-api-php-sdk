@@ -8,8 +8,10 @@ use Farshidboroomand\BookingApiPhpSdk\Client;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\Accommodation;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationAvailability;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationChain;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationReviewScores;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsAvailabilityPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsDetailsPayload;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsReviewScoresPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsReviewsPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\AvailabilityAccommodationsRequest;
@@ -18,6 +20,7 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\Constant
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsChangesAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ReviewsAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ReviewScoresAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -137,6 +140,22 @@ final readonly class AccommodationsResource
         $response = $this->connector->send(new ReviewsAccommodationsRequest($reviews));
 
         /** @var AccommodationReviewsResult $result */
+        $result = $response->dto();
+
+        return $result;
+    }
+
+    /**
+     * @return list<AccommodationReviewScores>
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function reviewScores(AccommodationsReviewScoresPayload $scores): array
+    {
+        $response = $this->connector->send(new ReviewScoresAccommodationsRequest($scores));
+
+        /** @var list<AccommodationReviewScores> $result */
         $result = $response->dto();
 
         return $result;

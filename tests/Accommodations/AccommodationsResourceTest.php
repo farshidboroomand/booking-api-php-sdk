@@ -13,8 +13,10 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationSear
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\Accommodation;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationBrand;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationChain;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationReviewScores;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsAvailabilityPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsDetailsPayload;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsReviewScoresPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsReviewsPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\AvailabilityAccommodationsRequest;
@@ -23,6 +25,7 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\Constant
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsChangesAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ReviewsAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ReviewScoresAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
 use Saloon\Http\Faking\MockResponse;
 
@@ -157,6 +160,30 @@ test('it retrieves paginated accommodation reviews', function (): void {
     expect($result)->toBeInstanceOf(AccommodationReviewsResult::class)
         ->and($result->accommodations[0]->reviews[0]['positive'])->toBe('Lovely stay')
         ->and($result->nextPage)->toBe('cursor-2');
+});
+
+test('it retrieves review scores and distributions', function (): void {
+    $client = new Client(affiliateId: 1234, token: 'token');
+    $client->withMockClient(mockClient([
+        ReviewScoresAccommodationsRequest::class => MockResponse::make([
+            'request_id' => 'request-1',
+            'data' => [[
+                'id' => 10004,
+                'score' => 8.9,
+                'number_of_reviews' => 243,
+                'breakdown' => ['cleanliness' => ['score' => 9.27, 'number_of_reviews' => 243]],
+                'distribution' => ['10' => ['number_of_reviews' => 104, 'percentage' => 42.8]],
+                'url' => 'https://www.booking.com/hotel/example.html#tab-reviews',
+            ]],
+        ]),
+    ]));
+
+    $scores = $client->accommodations()->reviewScores(new AccommodationsReviewScoresPayload([10004], languages: ['en-gb']));
+
+    expect($scores[0])->toBeInstanceOf(AccommodationReviewScores::class)
+        ->and($scores[0]->score)->toBe(8.9)
+        ->and($scores[0]->numberOfReviews)->toBe(243)
+        ->and($scores[0]->distribution['10']['number_of_reviews'])->toBe(104);
 });
 
 test('it retrieves availability for multiple accommodations', function (): void {
