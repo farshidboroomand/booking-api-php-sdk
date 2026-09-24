@@ -1,263 +1,68 @@
 # Booking.com Demand API PHP SDK
 
-An unofficial PHP SDK for the [Booking.com Demand API](https://developers.booking.com/demand/docs/open-api/3.2/demand-api) (version 3.2). It wraps the API behind typed, readable PHP objects so you can search and later book inventory without hand-writing the HTTP calls and payloads.
-
-> **Status: under construction.** This SDK is an early-stage project. It supports the Demand API v3.2 accommodation endpoints. The public API and namespaces may change before a stable `1.0.0` release. Use it for exploration and testing, not yet for production traffic.
-
----
+An unofficial PHP SDK for the [Booking.com Demand API v3.2](https://developers.booking.com/demand/docs/open-api/3.2/demand-api). It currently supports the accommodation endpoints. The API may change before a stable release.
 
 ## Requirements
 
 - PHP 8.3 or newer
 - Composer 2 or newer
-- A Booking.com Affiliate Partner account (for a token and affiliate ID) to call the live API
+- Booking.com Affiliate ID and API token
 
 ## Installation
-
-Install it with Composer:
 
 ```bash
 composer require farshidboroomand/booking-api-php-sdk
 ```
 
-If you are developing locally instead of pulling from Packagist, add it as a VCS (or path) repository in your own `composer.json` and install from there.
+## Usage
 
-## Getting started
-
-### 1. Create a client
-
-The `Client` is the single entry point. It holds your credentials and lets you choose which environment to talk to. It defaults to the Booking.com sandbox, which is safe for testing.
+Create a client with your credentials. The sandbox is the default environment; pass `Environment::Production` for live requests.
 
 ```php
-<?php
-
-declare(strict_types=1);
-
-require __DIR__ . '/vendor/autoload.php';
-
 use Farshidboroomand\BookingApiPhpSdk\Client;
-
-$client = new Client(
-    affiliateId: 1234,          // your Affiliate Partner ID (integer)
-    token: 'your-api-token',    // your token (no "Bearer" prefix)
-);
-```
-
-To point the same client at production once you are ready, pass the environment:
-
-```php
-$client = new Client(
-    affiliateId: 1234,
-    token: 'your-api-token',
-    environment: Environment::Production,
-);
-```
-
-Valid environments are `Environment::Sandbox` (the default) and `Environment::Production`.
-
-### 2. Search accommodations
-
-Every endpoint accepts a typed payload. Build it with the `make()` factory, then call the matching method on the resource.
-
-```php
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsSearchPayload;
+
+$client = new Client(affiliateId: 1234, token: 'your-api-token');
 
 $result = $client->accommodations()->search(
     search: AccommodationsSearchPayload::make([
-        'booker'  => ['country' => 'nl', 'platform' => 'desktop'],
+        'booker' => ['country' => 'nl', 'platform' => 'desktop'],
         'checkin' => '2026-09-01',
         'checkout' => '2026-09-10',
-        'guests'  => ['number_of_adults' => 2, 'number_of_rooms' => 1],
-        'city'    => -2140479,
-    ]),
-);
-```
-
-### 3. Work with the results
-
-The call returns an `AccommodationSearchResult` containing the typed accommodations and, when present, the cursor for the next page.
-
-```php
-foreach ($result->accommodations as $accommodation) {
-    printf("#%d %s\n", $accommodation->id, $accommodation->url);
-}
-
-if ($result->nextPage !== null) {
-    // pass $result->nextPage back into the payload's 'page' field to fetch the next page
-}
-```
-
-To list accommodation chains and their brands, call `chains()` without a payload:
-
-```php
-$chains = $client->accommodations()->chains();
-
-foreach ($chains as $chain) {
-    echo $chain->name;
-    foreach ($chain->brands as $brand) {
-        echo $brand->name;
-    }
-}
-```
-
-To retrieve localized accommodation reference data, select the constant sections and languages you need. Calling `constants()` with no arguments retrieves all sections in the API's default language.
-
-```php
-$constants = $client->accommodations()->constants(['room_types', 'bed_types'], ['en-gb']);
-foreach ($constants->sections['room_types'] as $roomType) {
-    echo $roomType['name']['en-gb'];
-}
-```
-
-Property details are retrieved separately from prices and availability. Provide accommodation IDs or a location; use `extras` to include optional sections.
-
-```php
-use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsDetailsPayload;
-
-$details = $client->accommodations()->details(new AccommodationsDetailsPayload([
-    'accommodations' => [10004],
-    'extras' => ['rooms', 'photos'],
-    'languages' => ['en-gb'],
-]));
-
-foreach ($details->accommodations as $property) {
-    echo $property->data['name']['en-gb'];
-}
-// Pass $details->nextPage as the 'page' criterion to fetch more results.
-```
-
-To keep a local property cache current, poll for changed IDs and pass the returned `next` timestamp into the next call when it is present:
-
-```php
-$changes = $client->accommodations()->detailsChanges(
-    '2026-09-23T12:00:00+00:00',
-    countries: ['nl'],
-);
-
-foreach ($changes->changed as $id) {
-    // Refresh this property's details.
-}
-```
-
-To fetch traveller reviews, provide accommodation IDs and optional filters. Use `nextPage` as the next payload's `page` value.
-
-```php
-use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsReviewsPayload;
-
-$reviews = $client->accommodations()->reviews(
-    new AccommodationsReviewsPayload([10004], languages: ['en-gb'], rows: 10),
-);
-
-foreach ($reviews->accommodations as $property) {
-    foreach ($property->reviews as $review) {
-        echo $review['summary'];
-    }
-}
-```
-
-Review score aggregates are available through a separate endpoint:
-
-```php
-use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsReviewScoresPayload;
-
-$scores = $client->accommodations()->reviewScores(
-    new AccommodationsReviewScoresPayload([10004], languages: ['en-gb']),
-);
-echo $scores[0]->score;
-```
-
-To resolve a third-party supplier ID from an availability product, retrieve the supplier list:
-
-```php
-$suppliers = $client->accommodations()->thirdPartySuppliers();
-foreach ($suppliers as $supplier) {
-    echo $supplier->id, ' ', $supplier->name;
-}
-```
-
-To check live availability for one or more properties (up to 50 IDs), use the availability payload. Each returned accommodation contains its products and, when supplied by the API, a recommendation.
-
-```php
-use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsAvailabilityPayload;
-
-$result = $client->accommodations()->availability(
-    AccommodationsAvailabilityPayload::make([
-        'accommodations' => [10004],
-        'booker' => ['country' => 'nl', 'platform' => 'desktop'],
-        'checkin' => '2026-10-01',
-        'checkout' => '2026-10-05',
         'guests' => ['number_of_adults' => 2, 'number_of_rooms' => 1],
-        'extras' => ['extra_charges'],
+        'city' => -2140479,
     ]),
 );
 
-foreach ($result->accommodations as $accommodation) {
-    foreach ($accommodation->products as $product) {
-        echo $product['id'];
-    }
-}
+$accommodations = $result->accommodations;
+$nextPage = $result->nextPage;
 ```
 
-### Error handling
+The accommodation resource also provides:
 
-Network failures and non-2xx responses from the API throw exceptions from the Saloon library, so you can catch them and read the detail Booking.com returned.
+| Method | Purpose |
+| --- | --- |
+| `availability($payload)` | Live products and prices |
+| `chains()` | Chains and brands |
+| `constants($sections, $languages)` | Accommodation reference data |
+| `details($payload)` | Property details |
+| `detailsChanges($lastChange, $countries, $cities)` | Changed property IDs |
+| `reviews($payload)` | Traveller reviews |
+| `reviewScores($payload)` | Aggregate scores |
+| `thirdPartySuppliers()` | Supplier information |
 
-```php
-use Saloon\Exceptions\Request\RequestException;
-
-try {
-    $result = $client->accommodations()->search($search);
-} catch (RequestException $e) {
-    $errors = $e->getResponse()->json('errors');
-}
-```
-
----
-
-## Project structure
-
-The folder layout mirrors the API groups and each layer's role.
-
-```
-src/
-├── Client.php                  entry point (credentials, environment, headers)
-├── Enums/                      fixed string values as typed enums
-└── Resources/
-    └── Accommodations/
-        ├── AccommodationsResource.php      one method per endpoint
-        ├── AccommodationSearchResult.php   typed result (accommodations + next page)
-        ├── DTOs/Accommodation.php          one item from the response
-        ├── Payloads/                      request bodies
-        └── Requests/                      one HTTP call per file
-```
+Payload classes are in `Resources\Accommodations\Payloads`. Results expose typed properties; details and review records retain their full API data for optional fields.
 
 ## Development
 
-Clone the repository and install the development dependencies:
-
 ```bash
 composer install
+composer test
+composer stan
+composer lint
 ```
 
-Run the checks:
-
-```bash
-composer test     # Pest test suite
-composer stan     # PHPStan static analysis (level 10)
-composer lint     # Pint code style check (no changes)
-```
-
-Fix code style automatically with:
-
-```bash
-composer pint
-```
-
-The tests run against local fixtures, so they never touch the real API.
-
-## Scope and roadmap
-
-The accommodation endpoints are in place. Other Demand API resources, including car rentals, common lookups (locations, payments, languages), and orders, are planned.
+Tests use local mock responses and do not call Booking.com.
 
 ## License
 
