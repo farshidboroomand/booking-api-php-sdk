@@ -7,9 +7,11 @@ namespace Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations;
 use Farshidboroomand\BookingApiPhpSdk\Client;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\Accommodation;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationAvailability;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationChain;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsAvailabilityPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\AvailabilityAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ChainsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -54,5 +56,21 @@ final readonly class AccommodationsResource
         $accommodations = $response->dto();
 
         return new AccommodationAvailabilityResult(accommodations: $accommodations);
+    }
+
+    /**
+     * @return list<AccommodationChain>
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function chains(): array
+    {
+        $response = $this->connector->send(new ChainsAccommodationsRequest);
+
+        /** @var list<AccommodationChain> $chains */
+        $chains = $response->dto();
+
+        return $chains;
     }
 }

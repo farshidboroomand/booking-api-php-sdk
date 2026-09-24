@@ -7,9 +7,12 @@ use Farshidboroomand\BookingApiPhpSdk\Enums\Extras;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationAvailabilityResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationSearchResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\Accommodation;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationBrand;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationChain;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsAvailabilityPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\AvailabilityAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ChainsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
 use Saloon\Http\Faking\MockResponse;
 
@@ -39,6 +42,30 @@ describe('Accommodations Search', function (): void {
         expect($response->accommodations)->toBeArray()->each->toBeInstanceOf(Accommodation::class);
         expect($response->nextPage)->toBeString();
     });
+});
+
+test('it retrieves chains and their brands', function (): void {
+    $client = new Client(affiliateId: 1234, token: 'token');
+    $client->withMockClient(mockClient([
+        ChainsAccommodationsRequest::class => MockResponse::make([
+            'request_id' => 'request-1',
+            'data' => [
+                ['id' => 1, 'name' => 'Example Group', 'brands' => [
+                    ['id' => 10, 'name' => 'Example Hotels'],
+                ]],
+                ['id' => 2, 'name' => 'Another Group', 'brands' => []],
+            ],
+        ]),
+    ]));
+
+    $chains = $client->accommodations()->chains();
+
+    expect($chains)->toHaveCount(2)
+        ->and($chains[0])->toBeInstanceOf(AccommodationChain::class)
+        ->and($chains[0]->name)->toBe('Example Group')
+        ->and($chains[0]->brands[0])->toBeInstanceOf(AccommodationBrand::class)
+        ->and($chains[0]->brands[0]->id)->toBe(10)
+        ->and($chains[1]->brands)->toBe([]);
 });
 
 test('it retrieves availability for multiple accommodations', function (): void {

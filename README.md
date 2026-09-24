@@ -2,7 +2,7 @@
 
 An unofficial PHP SDK for the [Booking.com Demand API](https://developers.booking.com/demand/docs/open-api/3.2/demand-api) (version 3.2). It wraps the API behind typed, readable PHP objects so you can search and later book inventory without hand-writing the HTTP calls and payloads.
 
-> **Status: under construction.** This SDK is an early-stage project. Right now it supports accommodation search and availability. The public API and namespaces may change before a stable `1.0.0` release. Use it for exploration and testing, not yet for production traffic.
+> **Status: under construction.** This SDK is an early-stage project. Right now it supports accommodation search, availability, and chains. The public API and namespaces may change before a stable `1.0.0` release. Use it for exploration and testing, not yet for production traffic.
 
 ---
 
@@ -84,6 +84,19 @@ foreach ($result->accommodations as $accommodation) {
 
 if ($result->nextPage !== null) {
     // pass $result->nextPage back into the payload's 'page' field to fetch the next page
+}
+```
+
+To list accommodation chains and their brands, call `chains()` without a payload:
+
+```php
+$chains = $client->accommodations()->chains();
+
+foreach ($chains as $chain) {
+    echo $chain->name;
+    foreach ($chain->brands as $brand) {
+        echo $brand->name;
+    }
 }
 ```
 
@@ -169,7 +182,7 @@ The tests run against local fixtures, so they never touch the real API.
 
 ## Scope and roadmap
 
-The first resource, accommodation search, is in place. The remaining endpoints of the Demand API are planned and will be added resource by resource: the rest of the accommodations operations, car rentals, common lookups (locations, payments, languages), and eventually orders.
+Accommodation search, availability, and chains are in place. The remaining endpoints of the Demand API are planned and will be added resource by resource: the rest of the accommodations operations, car rentals, common lookups (locations, payments, languages), and eventually orders.
 
 ## License
 
