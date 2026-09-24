@@ -100,6 +100,15 @@ foreach ($chains as $chain) {
 }
 ```
 
+To retrieve localized accommodation reference data, select the constant sections and languages you need. Calling `constants()` with no arguments retrieves all sections in the API's default language.
+
+```php
+$constants = $client->accommodations()->constants(['room_types', 'bed_types'], ['en-gb']);
+foreach ($constants->sections['room_types'] as $roomType) {
+    echo $roomType['name']['en-gb'];
+}
+```
+
 To check live availability for one or more properties (up to 50 IDs), use the availability payload. Each returned accommodation contains its products and, when supplied by the API, a recommendation.
 
 ```php

@@ -12,6 +12,7 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\Accommod
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\AvailabilityAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ChainsAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ConstantsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -72,5 +73,22 @@ final readonly class AccommodationsResource
         $chains = $response->dto();
 
         return $chains;
+    }
+
+    /**
+     * @param  list<string>  $constants
+     * @param  list<string>  $languages
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function constants(array $constants = [], array $languages = []): AccommodationConstantsResult
+    {
+        $response = $this->connector->send(new ConstantsAccommodationsRequest($constants, $languages));
+
+        /** @var AccommodationConstantsResult $result */
+        $result = $response->dto();
+
+        return $result;
     }
 }

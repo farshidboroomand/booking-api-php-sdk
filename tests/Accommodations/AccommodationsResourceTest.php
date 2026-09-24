@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Farshidboroomand\BookingApiPhpSdk\Client;
 use Farshidboroomand\BookingApiPhpSdk\Enums\Extras;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationAvailabilityResult;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationConstantsResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationSearchResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\Accommodation;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationBrand;
@@ -13,6 +14,7 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\Accommod
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\AvailabilityAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ChainsAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ConstantsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
 use Saloon\Http\Faking\MockResponse;
 
@@ -66,6 +68,25 @@ test('it retrieves chains and their brands', function (): void {
         ->and($chains[0]->brands[0])->toBeInstanceOf(AccommodationBrand::class)
         ->and($chains[0]->brands[0]->id)->toBe(10)
         ->and($chains[1]->brands)->toBe([]);
+});
+
+test('it retrieves selected localized accommodation constants', function (): void {
+    $client = new Client(affiliateId: 1234, token: 'token');
+    $client->withMockClient(mockClient([
+        ConstantsAccommodationsRequest::class => MockResponse::make([
+            'request_id' => 'request-1',
+            'data' => [
+                'room_types' => [['id' => 1, 'name' => ['en-gb' => 'Single room']]],
+                'review_scores' => [['minimum_score' => 9, 'maximum_score' => 10, 'name' => ['en-gb' => 'Superb']]],
+            ],
+        ]),
+    ]));
+
+    $result = $client->accommodations()->constants(['room_types', 'review_scores'], ['en-gb']);
+
+    expect($result)->toBeInstanceOf(AccommodationConstantsResult::class)
+        ->and($result->sections['room_types'][0]['name']['en-gb'])->toBe('Single room')
+        ->and($result->sections['review_scores'][0]['minimum_score'])->toBe(9);
 });
 
 test('it retrieves availability for multiple accommodations', function (): void {
