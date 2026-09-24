@@ -9,10 +9,12 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\Accommodatio
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationAvailability;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationChain;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsAvailabilityPayload;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsDetailsPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\AvailabilityAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ChainsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ConstantsAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
@@ -87,6 +89,20 @@ final readonly class AccommodationsResource
         $response = $this->connector->send(new ConstantsAccommodationsRequest($constants, $languages));
 
         /** @var AccommodationConstantsResult $result */
+        $result = $response->dto();
+
+        return $result;
+    }
+
+    /**
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function details(AccommodationsDetailsPayload $details): AccommodationDetailsResult
+    {
+        $response = $this->connector->send(new DetailsAccommodationsRequest($details));
+
+        /** @var AccommodationDetailsResult $result */
         $result = $response->dto();
 
         return $result;

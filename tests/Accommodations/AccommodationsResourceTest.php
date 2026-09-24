@@ -6,15 +6,18 @@ use Farshidboroomand\BookingApiPhpSdk\Client;
 use Farshidboroomand\BookingApiPhpSdk\Enums\Extras;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationAvailabilityResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationConstantsResult;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationDetailsResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationSearchResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\Accommodation;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationBrand;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationChain;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsAvailabilityPayload;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsDetailsPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\AvailabilityAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ChainsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ConstantsAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
 use Saloon\Http\Faking\MockResponse;
 
@@ -87,6 +90,28 @@ test('it retrieves selected localized accommodation constants', function (): voi
     expect($result)->toBeInstanceOf(AccommodationConstantsResult::class)
         ->and($result->sections['room_types'][0]['name']['en-gb'])->toBe('Single room')
         ->and($result->sections['review_scores'][0]['minimum_score'])->toBe(9);
+});
+
+test('it retrieves accommodation details and pagination', function (): void {
+    $client = new Client(affiliateId: 1234, token: 'token');
+    $client->withMockClient(mockClient([
+        DetailsAccommodationsRequest::class => MockResponse::make([
+            'request_id' => 'request-1',
+            'data' => [['id' => 10004, 'name' => ['en-gb' => 'Example Hotel'], 'rooms' => [['id' => 'room-a']]]],
+            'metadata' => ['next_page' => 'cursor-2'],
+        ]),
+    ]));
+
+    $result = $client->accommodations()->details(new AccommodationsDetailsPayload([
+        'accommodations' => [10004],
+        'extras' => ['rooms'],
+        'languages' => ['en-gb'],
+    ]));
+
+    expect($result)->toBeInstanceOf(AccommodationDetailsResult::class)
+        ->and($result->accommodations[0]->id)->toBe(10004)
+        ->and($result->accommodations[0]->data['rooms'][0]['id'])->toBe('room-a')
+        ->and($result->nextPage)->toBe('cursor-2');
 });
 
 test('it retrieves availability for multiple accommodations', function (): void {

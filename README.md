@@ -109,6 +109,23 @@ foreach ($constants->sections['room_types'] as $roomType) {
 }
 ```
 
+Property details are retrieved separately from prices and availability. Provide accommodation IDs or a location; use `extras` to include optional sections.
+
+```php
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsDetailsPayload;
+
+$details = $client->accommodations()->details(new AccommodationsDetailsPayload([
+    'accommodations' => [10004],
+    'extras' => ['rooms', 'photos'],
+    'languages' => ['en-gb'],
+]));
+
+foreach ($details->accommodations as $property) {
+    echo $property->data['name']['en-gb'];
+}
+// Pass $details->nextPage as the 'page' criterion to fetch more results.
+```
+
 To check live availability for one or more properties (up to 50 IDs), use the availability payload. Each returned accommodation contains its products and, when supplied by the API, a recommendation.
 
 ```php
