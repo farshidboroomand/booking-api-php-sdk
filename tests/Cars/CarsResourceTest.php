@@ -6,11 +6,13 @@ use Farshidboroomand\BookingApiPhpSdk\Client;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarConstantsResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarDepotScoresResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarDepotsResult;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarDetailsResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarSearchResult;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Payloads\CarsSearchPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\ConstantsCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DepotsCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DepotScoresCarsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\DetailsCarsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\Requests\SearchCarsRequest;
 use Saloon\Http\Faking\MockResponse;
 
@@ -96,5 +98,23 @@ test('it retrieves depot review scores', function (): void {
     expect($result)->toBeInstanceOf(CarDepotScoresResult::class)
         ->and($result->scores[0]->score)->toBe(9.1)
         ->and($result->scores[1]->score)->toBeNull()
+        ->and($result->nextPage)->toBe('cursor-2');
+});
+
+test('it retrieves paginated car specifications', function (): void {
+    $client = new Client(affiliateId: 1234, token: 'token');
+    $client->withMockClient(mockClient([
+        DetailsCarsRequest::class => MockResponse::make([
+            'request_id' => 'request-1',
+            'data' => [['id' => 37715, 'make' => 'Hyundai', 'model' => 'Elantra', 'supplier' => 423]],
+            'metadata' => ['next_page' => 'cursor-2'],
+        ]),
+    ]));
+
+    $result = $client->cars()->details(lastModified: '2026-03-01T11:05:00+00:00', maximumResults: 10);
+
+    expect($result)->toBeInstanceOf(CarDetailsResult::class)
+        ->and($result->cars[0]->id)->toBe(37715)
+        ->and($result->cars[0]->data['model'])->toBe('Elantra')
         ->and($result->nextPage)->toBe('cursor-2');
 });
