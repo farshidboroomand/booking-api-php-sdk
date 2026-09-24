@@ -14,6 +14,7 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\Accommodatio
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationBrand;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationChain;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationReviewScores;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\ThirdPartySupplier;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsAvailabilityPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsDetailsPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsReviewScoresPayload;
@@ -27,6 +28,7 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsC
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ReviewsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ReviewScoresAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ThirdPartySuppliersAccommodationsRequest;
 use Saloon\Http\Faking\MockResponse;
 
 describe('Accommodations Search', function (): void {
@@ -184,6 +186,31 @@ test('it retrieves review scores and distributions', function (): void {
         ->and($scores[0]->score)->toBe(8.9)
         ->and($scores[0]->numberOfReviews)->toBe(243)
         ->and($scores[0]->distribution['10']['number_of_reviews'])->toBe(104);
+});
+
+test('it retrieves third-party suppliers with optional addresses', function (): void {
+    $client = new Client(affiliateId: 1234, token: 'token');
+    $client->withMockClient(mockClient([
+        ThirdPartySuppliersAccommodationsRequest::class => MockResponse::make([
+            'request_id' => 'request-1',
+            'data' => [
+                ['id' => 101, 'name' => 'Example Supplier', 'company_address' => 'Amsterdam'],
+                ['id' => 102, 'name' => 'Another Supplier', 'company_address' => null],
+            ],
+        ]),
+    ]));
+
+    $suppliers = $client->accommodations()->thirdPartySuppliers();
+
+    expect($suppliers)->toHaveCount(2)
+        ->and($suppliers[0])->toBeInstanceOf(ThirdPartySupplier::class)
+        ->and($suppliers[0]->companyAddress)->toBe('Amsterdam')
+        ->and($suppliers[1]->companyAddress)->toBeNull();
+});
+
+test('empty-body lookup requests serialize a JSON object', function (): void {
+    expect((string) (new ConstantsAccommodationsRequest)->body())->toBe('{}')
+        ->and((string) (new ThirdPartySuppliersAccommodationsRequest)->body())->toBe('{}');
 });
 
 test('it retrieves availability for multiple accommodations', function (): void {

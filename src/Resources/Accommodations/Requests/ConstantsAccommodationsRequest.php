@@ -11,11 +11,11 @@ use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
-use Saloon\Traits\Body\HasJsonBody;
+use Saloon\Traits\Body\HasStringBody;
 
 final class ConstantsAccommodationsRequest extends Request implements HasBody
 {
-    use HasJsonBody;
+    use HasStringBody;
 
     private const array SECTIONS = [
         'accommodation_facilities', 'accommodation_themes', 'accommodation_types',
@@ -43,8 +43,13 @@ final class ConstantsAccommodationsRequest extends Request implements HasBody
         return '/accommodations/constants';
     }
 
-    /** @return array<string, list<string>> */
-    protected function defaultBody(): array
+    /** @return array<string, string> */
+    protected function defaultHeaders(): array
+    {
+        return ['Content-Type' => 'application/json'];
+    }
+
+    protected function defaultBody(): string
     {
         $body = [];
         if ($this->constants !== []) {
@@ -54,7 +59,7 @@ final class ConstantsAccommodationsRequest extends Request implements HasBody
             $body['languages'] = $this->languages;
         }
 
-        return $body;
+        return $body === [] ? '{}' : json_encode($body, JSON_THROW_ON_ERROR);
     }
 
     public function createDtoFromResponse(Response $response): AccommodationConstantsResult

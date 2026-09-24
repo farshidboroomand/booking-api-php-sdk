@@ -2,7 +2,7 @@
 
 An unofficial PHP SDK for the [Booking.com Demand API](https://developers.booking.com/demand/docs/open-api/3.2/demand-api) (version 3.2). It wraps the API behind typed, readable PHP objects so you can search and later book inventory without hand-writing the HTTP calls and payloads.
 
-> **Status: under construction.** This SDK is an early-stage project. Right now it supports accommodation search, availability, and chains. The public API and namespaces may change before a stable `1.0.0` release. Use it for exploration and testing, not yet for production traffic.
+> **Status: under construction.** This SDK is an early-stage project. It supports the Demand API v3.2 accommodation endpoints. The public API and namespaces may change before a stable `1.0.0` release. Use it for exploration and testing, not yet for production traffic.
 
 ---
 
@@ -166,6 +166,15 @@ $scores = $client->accommodations()->reviewScores(
 echo $scores[0]->score;
 ```
 
+To resolve a third-party supplier ID from an availability product, retrieve the supplier list:
+
+```php
+$suppliers = $client->accommodations()->thirdPartySuppliers();
+foreach ($suppliers as $supplier) {
+    echo $supplier->id, ' ', $supplier->name;
+}
+```
+
 To check live availability for one or more properties (up to 50 IDs), use the availability payload. Each returned accommodation contains its products and, when supplied by the API, a recommendation.
 
 ```php
@@ -248,7 +257,7 @@ The tests run against local fixtures, so they never touch the real API.
 
 ## Scope and roadmap
 
-Accommodation search, availability, and chains are in place. The remaining endpoints of the Demand API are planned and will be added resource by resource: the rest of the accommodations operations, car rentals, common lookups (locations, payments, languages), and eventually orders.
+The accommodation endpoints are in place. Other Demand API resources, including car rentals, common lookups (locations, payments, languages), and orders, are planned.
 
 ## License
 

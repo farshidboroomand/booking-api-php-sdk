@@ -9,6 +9,7 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\Accommodatio
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationAvailability;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationChain;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\AccommodationReviewScores;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\DTOs\ThirdPartySupplier;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsAvailabilityPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsDetailsPayload;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Payloads\AccommodationsReviewScoresPayload;
@@ -22,6 +23,7 @@ use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\DetailsC
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ReviewsAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ReviewScoresAccommodationsRequest;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\SearchAccommodationsRequest;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\Requests\ThirdPartySuppliersAccommodationsRequest;
 use Saloon\Exceptions\Request\FatalRequestException;
 use Saloon\Exceptions\Request\RequestException;
 
@@ -156,6 +158,22 @@ final readonly class AccommodationsResource
         $response = $this->connector->send(new ReviewScoresAccommodationsRequest($scores));
 
         /** @var list<AccommodationReviewScores> $result */
+        $result = $response->dto();
+
+        return $result;
+    }
+
+    /**
+     * @return list<ThirdPartySupplier>
+     *
+     * @throws FatalRequestException
+     * @throws RequestException
+     */
+    public function thirdPartySuppliers(): array
+    {
+        $response = $this->connector->send(new ThirdPartySuppliersAccommodationsRequest);
+
+        /** @var list<ThirdPartySupplier> $result */
         $result = $response->dto();
 
         return $result;
