@@ -6,6 +6,7 @@ namespace Farshidboroomand\BookingApiPhpSdk;
 
 use Farshidboroomand\BookingApiPhpSdk\Enums\Environment;
 use Farshidboroomand\BookingApiPhpSdk\Resources\Accommodations\AccommodationsResource;
+use Farshidboroomand\BookingApiPhpSdk\Resources\Cars\CarsResource;
 use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Connector;
 use Saloon\Http\PendingRequest;
@@ -49,5 +50,10 @@ final class Client extends Connector
     public function accommodations(): AccommodationsResource
     {
         return new AccommodationsResource(connector: $this);
+    }
+
+    public function cars(): CarsResource
+    {
+        return new CarsResource(connector: $this);
     }
 }

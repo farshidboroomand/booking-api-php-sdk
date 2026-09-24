@@ -53,6 +53,8 @@ The accommodation resource also provides:
 
 Payload classes are in `Resources\Accommodations\Payloads`. Results expose typed properties; details and review records retain their full API data for optional fields.
 
+Car rental search is available through `$client->cars()->search($payload)`. Pass a `CarsSearchPayload` with booker, currency, driver, and route information. The result includes products, pagination, and a search token.
+
 ## Development
 
 ```bash
